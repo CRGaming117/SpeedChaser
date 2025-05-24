@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.text.DecimalFormat;
 
 public class PanelSC extends JPanel {
   private int w, h;
@@ -35,7 +36,7 @@ public class PanelSC extends JPanel {
     // Physiscs variables
     moving = false;
     // Road line variables
-    lny = 225;
+    lny = -35;
     vY = 0;
     // Player variables
     vX = 0;
@@ -57,6 +58,8 @@ public class PanelSC extends JPanel {
     g.setFont(new Font("Arial", Font.PLAIN, 15));
     g.setColor(Color.white);
     g.drawString("v0.00.1", 5, 15); // UPDATE VERSION WHEN MODIFYING
+    g.setFont(new Font("Arial", Font.ITALIC, 25));
+    g.drawString(new DecimalFormat("#000.00#").format(YSPEED * 5) + " MPH", w - 150, 25);
     // ground
     g.setColor(Color.green);
     g.fillRect(0, 225, w, 225);
@@ -66,10 +69,11 @@ public class PanelSC extends JPanel {
     int[] ryp = { 225, 225, 450, 450 };
     g.fillPolygon(rxp, ryp, rxp.length);
     // lines
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 10; i++) {
       g.setColor(Color.white);
       g.fillRect(390, lny + 50 * i, 20, 35);
     }
+    // line cover
     g.setColor(Color.blue);
     g.fillRect(390, 0, 20, 225);
 
@@ -82,10 +86,12 @@ public class PanelSC extends JPanel {
   public class AL implements ActionListener {
     public void actionPerformed(ActionEvent e) {
       if (lny > 240)
-        lny = 190;
+        lny = 0;
       // System.out.println(lny);
-      else if (lny < 195)
-        lny = 225;
+      /*
+       * else if (lny < 195)
+       * lny = 225;
+       */
 
       update();
     }
@@ -95,27 +101,31 @@ public class PanelSC extends JPanel {
     vX = 0;
     vY = 0;
     vY = (int) YSPEED;
+
+    moving = YSPEED != 0;
+
     if (throttle) {
       YSPEED += 0.05;
+      if (YSPEED >= 45) {
+        YSPEED = 45;
+      }
     } else {
       if (YSPEED > 0) {
-        YSPEED -= 0.05;
+        YSPEED -= 0.02;
       } else {
         YSPEED = 0;
       }
     }
-    if (left)
-      vX = -XSPEED;
-    if (right)
-      vX = XSPEED;
-
+    if (moving) {
+      if (left)
+        vX = -XSPEED;
+      if (right)
+        vX = XSPEED;
+    }
     px += vX;
     lny += vY;
 
-    if (!throttle && moving) {
-
-    }
-    System.out.println(YSPEED);
+    // System.out.println(YSPEED);
 
     repaint();
   }
