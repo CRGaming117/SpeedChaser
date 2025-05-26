@@ -23,6 +23,7 @@ public class PanelSC extends JPanel {
   private int XSPEED = 8;
   private boolean left, right, throttle, moving;
   private double YSPEED = 0.0;
+  private double GEAR[] = { 0.02, 0.04, 0.06, 0.08 };
   // Timer
   private Timer t;
   private Timer s;
@@ -59,7 +60,7 @@ public class PanelSC extends JPanel {
     g.setColor(Color.white);
     g.drawString("v0.00.1", 5, 15); // UPDATE VERSION WHEN MODIFYING
     g.setFont(new Font("Arial", Font.ITALIC, 25));
-    g.drawString(new DecimalFormat("#000.00#").format(YSPEED * 5) + " MPH", w - 150, 25);
+    g.drawString(new DecimalFormat("#000.00#").format(YSPEED) + " MPH", w - 150, 25);
     // ground
     g.setColor(Color.green);
     g.fillRect(0, 225, w, 225);
@@ -81,6 +82,10 @@ public class PanelSC extends JPanel {
     new Car().drawRed(g, px, py, pw, ph);
     // Obstacle 1
 
+    g.setColor(Color.yellow);
+    g.setFont(new Font("Arial", Font.BOLD, 30));
+    if (!moving)
+      g.drawString("Press SPACE to START", (w / 2) - 160, (h / 2) - 15);
   }
 
   public class AL implements ActionListener {
@@ -92,6 +97,12 @@ public class PanelSC extends JPanel {
        * else if (lny < 195)
        * lny = 225;
        */
+
+      if (px + pw >= w) {
+        px = w - pw;
+      } else if (px <= 0) {
+        px = 0;
+      }
 
       update();
     }
@@ -105,7 +116,7 @@ public class PanelSC extends JPanel {
     moving = YSPEED != 0;
 
     if (throttle) {
-      YSPEED += 0.05;
+      YSPEED += GEAR[1];
       if (YSPEED >= 45) {
         YSPEED = 45;
       }
@@ -132,7 +143,7 @@ public class PanelSC extends JPanel {
 
   public class KL implements KeyListener {
     public void keyPressed(KeyEvent e) {
-      if (e.getKeyCode() == KeyEvent.VK_W) {
+      if (e.getKeyCode() == KeyEvent.VK_SPACE) {
         throttle = true;
         moving = true;
       }
@@ -143,7 +154,7 @@ public class PanelSC extends JPanel {
     }
 
     public void keyReleased(KeyEvent e) {
-      if (e.getKeyCode() == KeyEvent.VK_W)
+      if (e.getKeyCode() == KeyEvent.VK_SPACE)
         throttle = false;
       if (e.getKeyCode() == KeyEvent.VK_A)
         left = false;
@@ -154,6 +165,7 @@ public class PanelSC extends JPanel {
     }
 
     public void keyTyped(KeyEvent e) {
+
     }
   }
 }
